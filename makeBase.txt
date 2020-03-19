@@ -1,0 +1,34 @@
+CREATE TABLE users
+(
+    id SERIAL PRIMARY KEY,
+    username VARCHAR(90) UNIQUE,
+    password varchar(90),
+    firstname VARCHAR(90),
+    lastname VARCHAR(90),
+    phone VARCHAR(20)
+);
+
+CREATE TABLE tasks
+(
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(90),
+    description varchar(90),
+    alert_time date,
+    alert_received boolean
+);
+
+CREATE TABLE listsOfTasks
+(
+    id SERIAL PRIMARY KEY,
+    userId INT8 REFERENCES users(id),
+    taskId INT8 REFERENCES tasks(id),
+    name varchar(90)
+);
+
+CREATE TABLE WatcherForTasks
+(
+    id SERIAL PRIMARY KEY,
+    contactId INT8 REFERENCES tasks(id),
+    userdId INT8 REFERENCES users(id),
+    unique(contactId, userdId)
+);

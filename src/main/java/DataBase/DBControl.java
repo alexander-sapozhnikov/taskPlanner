@@ -20,4 +20,14 @@ public class DBControl {
             e.printStackTrace();
         }
     }
+
+
+
+    public void close (){
+        try{
+            conn.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }

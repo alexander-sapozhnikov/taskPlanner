@@ -12,23 +12,31 @@ CREATE TABLE tasks
 (
     id SERIAL PRIMARY KEY,
     name VARCHAR(90),
-    description varchar(90),
+    description text,
     alert_time date,
     alert_received boolean
 );
 
-CREATE TABLE listsOfTasks
+CREATE TABLE listsOfUsers
 (
     id SERIAL PRIMARY KEY,
     userId INT8 REFERENCES users(id),
-    taskId INT8 REFERENCES tasks(id),
-    name varchar(90)
+    name varchar(210)
 );
 
-CREATE TABLE WatcherForTasks
+CREATE TABLE tasksInLists
+(
+    id SERIAL PRIMARY KEY,
+    listId INT8 REFERENCES listsOfUsers(id),
+    taskId INT8 REFERENCES tasks(id),
+    unique(listId, taskId)
+);
+
+
+CREATE TABLE watcherForTasks
 (
     id SERIAL PRIMARY KEY,
     contactId INT8 REFERENCES tasks(id),
-    userdId INT8 REFERENCES users(id),
-    unique(contactId, userdId)
+    userId INT8 REFERENCES users(id),
+    unique(contactId, userId)
 );

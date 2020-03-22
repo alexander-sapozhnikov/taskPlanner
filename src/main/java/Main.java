@@ -41,7 +41,7 @@ public class Main {
         task.setDescription("im happy so pipez");
         logger.debug(dbControl.setTask(task, id, listId));
 
-        task.setName("reading a book");
+        task.setName("reading a interesting book");
         task.setDescription("just relax");
         logger.debug(dbControl.setTask(task, id, listId));
 

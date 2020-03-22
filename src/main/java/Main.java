@@ -10,24 +10,42 @@ public class Main {
     public static void main(String[] args) {
         DBControl dbControl = new DBControl();
 
-        /*User user = new User();
-        user.setId(15);
-        user.setUsername("nsssssa");
-        user.setPassword("123");
-        logger.debug( dbControl.updateUser(user));*/
 
-        /*ask task = new Task();
-        task.setId(2);
-        task.setName("to do univer");
-        task.setDescription("im very very  tired");
-        logger.debug(dbControl.setTask(task, 1, 1));*/
+        User user = new User();
+        user.setUsername("Lola");
+        user.setPassword("2d4");
+        int id = dbControl.setUser(user);
+        logger.debug(id);
+//
+//        user.setUsername("Vova");
+//        user.setPassword("fsaf");
+//        logger.debug(dbControl.setUser(user));
 
-        /*ListsOfUsers lists = new ListsOfUsers();
-        lists.setName("Netcracker");
-        lists.setUserId(1);
-        logger.debug(dbControl.getListsOfUsers(1).size());*/
+        ListsOfUsers lists = new ListsOfUsers();
+        lists.setName("Work");
+        lists.setUserId(id);
+        int listId = dbControl.setListsOfUsers(lists);
+        logger.debug(listId);
 
-        logger.debug(dbControl.getUserFromWathcer(4));
+//        lists.setName("Net");
+//        lists.setUserId(5);
+//        logger.debug(dbControl.setListsOfUsers(lists));
+
+        Task task = new Task();
+        task.setName("to do smt");
+        task.setDescription("im sitting here");
+        logger.debug(dbControl.setTask(task, id, listId));
+
+
+        task.setName("to do homeWork");
+        task.setDescription("im happy so pipez");
+        logger.debug(dbControl.setTask(task, id, listId));
+
+        task.setName("reading a book");
+        task.setDescription("just relax");
+        logger.debug(dbControl.setTask(task, id, listId));
+
+        logger.debug(dbControl.deleteUser(id));
 
         dbControl.close();
     }

@@ -5,11 +5,11 @@ import lombok.Data;
 import lombok.NonNull;
 import org.apache.log4j.Logger;
 
-import javax.jws.soap.SOAPBinding;
 import java.nio.charset.StandardCharsets;
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 
@@ -32,7 +32,7 @@ public class DBControl implements functionDataBase {
     }
 
     /**
-     * 1 - successful
+     * 1 >  - successful and it's id user
      * 0 - need change username
      * -1 - error
      * @param user
@@ -45,7 +45,7 @@ public class DBControl implements functionDataBase {
         try {
             prepared = conn.prepareStatement("INSERT INTO users " +
                     "(id, username, password, firstname, lastname, phone)" +
-                    "VALUES (DEFAULT, ?, ?, ?, ?, ?)");
+                    "VALUES (DEFAULT, ?, ?, ?, ?, ?) RETURNING id");
             prepared.setString(1, user.getUsername());
             String hash = Hashing.sha256()
                     .hashString(user.getPassword(), StandardCharsets.UTF_8)
@@ -55,12 +55,15 @@ public class DBControl implements functionDataBase {
             prepared.setString(4, user.getLastname());
             prepared.setString(5, user.getPhone());
 
-            prepared.execute();
-            return 1;
+            ResultSet resultSet = prepared.executeQuery();
+            if(resultSet.next()){
+                return resultSet.getInt("id");
+            }
         } catch (SQLException e) {
             logger.warn(e);
             return  e.getSQLState().equals("23505") ? 0 : -1;
         }
+        return -1;
     }
 
     @Override
@@ -148,7 +151,41 @@ public class DBControl implements functionDataBase {
     }
 
     @Override
-    public int setTask(@NonNull Task task, int listId, int userId) {
+    public boolean deleteUser(int id) {
+        PreparedStatement prepared = null;
+        try {
+
+            prepared = conn.prepareStatement("SELECT * FROM watcherForTasks " +
+                    "WHERE userId = ?");
+            prepared.setInt(1, id);
+            ResultSet resultSet = prepared.executeQuery();
+
+            List<Integer> tasksId = new ArrayList<>();
+            while (resultSet.next()){
+                tasksId.add(resultSet.getInt("contactId"));
+            }
+
+            prepared = conn.prepareStatement("DELETE FROM tasks " +
+                    "WHERE id = ?");
+
+            for(int taskId : tasksId){
+                prepared.setInt(1, taskId);
+                prepared.execute();
+            }
+            prepared = conn.prepareStatement("DELETE FROM users " +
+                    "WHERE id = ?");
+            prepared.setInt(1, id);
+
+            prepared.execute();
+            return true;
+        } catch (SQLException e) {
+            logger.warn(e);
+            return  false;
+        }
+    }
+
+    @Override
+    public int setTask(@NonNull Task task, int userId, int listId) {
         PreparedStatement prepared = null;
         int taskId = -1;
 
@@ -175,7 +212,7 @@ public class DBControl implements functionDataBase {
             prepared.execute();
 
             prepared = conn.prepareStatement("INSERT INTO watcherForTasks " +
-                    "(id, userdId, contactId)" +
+                    "(id, userId, contactId)" +
                     "VALUES (DEFAULT, ?, ?) ");
             prepared.setInt(1,userId);
             prepared.setInt(2, taskId);
@@ -273,7 +310,23 @@ public class DBControl implements functionDataBase {
     }
 
     @Override
-    public int setlistsOfUsers(ListsOfUsers listsOfUsers) {
+    public boolean deleteTask(int id) {
+        PreparedStatement prepared = null;
+        try {
+            prepared = conn.prepareStatement("DELETE FROM tasks " +
+                    "WHERE id = ?");
+            prepared.setInt(1, id);
+
+            prepared.execute();
+            return true;
+        } catch (SQLException e) {
+            logger.warn(e);
+            return  false;
+        }
+    }
+
+    @Override
+    public int setListsOfUsers(ListsOfUsers listsOfUsers) {
         PreparedStatement prepared = null;
 
         try {
@@ -337,7 +390,23 @@ public class DBControl implements functionDataBase {
     }
 
     @Override
-    public User getUserFromWathcer(int taskId) {
+    public boolean deleteListsOfUsers(int id) {
+        PreparedStatement prepared = null;
+        try {
+            prepared = conn.prepareStatement("DELETE FROM listsOfUsers " +
+                    "WHERE id = ?");
+            prepared.setInt(1, id);
+
+            prepared.execute();
+            return true;
+        } catch (SQLException e) {
+            logger.warn(e);
+            return  false;
+        }
+    }
+
+    @Override
+    public User getWatcherForTasks(int taskId) {
         User user = null;
         PreparedStatement prepared = null;
         ResultSet result = null;

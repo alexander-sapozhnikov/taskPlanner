@@ -1,6 +1,6 @@
 CREATE TABLE users
 (
-    id SERIAL PRIMARY KEY,
+    id SERIAL PRIMARY KEY NOT NULL,
     username VARCHAR(90) UNIQUE,
     password varchar(90),
     firstname VARCHAR(90),
@@ -10,7 +10,7 @@ CREATE TABLE users
 
 CREATE TABLE tasks
 (
-    id SERIAL PRIMARY KEY,
+    id SERIAL PRIMARY KEY NOT NULL,
     name VARCHAR(90),
     description text,
     alert_time date,
@@ -19,24 +19,25 @@ CREATE TABLE tasks
 
 CREATE TABLE listsOfUsers
 (
-    id SERIAL PRIMARY KEY,
-    userId INT8 REFERENCES users(id),
+    id SERIAL PRIMARY KEY NOT NULL,
+    userId INT8 REFERENCES users(id) ON DELETE CASCADE,
     name varchar(210)
 );
 
 CREATE TABLE tasksInLists
 (
-    id SERIAL PRIMARY KEY,
-    listId INT8 REFERENCES listsOfUsers(id),
-    taskId INT8 REFERENCES tasks(id),
+    id SERIAL PRIMARY KEY NOT NULL,
+    listId INT8 REFERENCES listsOfUsers(id) ON DELETE CASCADE,
+    taskId INT8 REFERENCES tasks(id) ON DELETE CASCADE,
     unique(listId, taskId)
 );
 
 
 CREATE TABLE watcherForTasks
 (
-    id SERIAL PRIMARY KEY,
-    contactId INT8 REFERENCES tasks(id),
-    userId INT8 REFERENCES users(id),
+    id SERIAL PRIMARY KEY NOT NULL,
+    contactId INT8 REFERENCES tasks(id) ON DELETE CASCADE,
+    userId INT8 REFERENCES users(id) ON DELETE CASCADE,
     unique(contactId, userId)
 );
+

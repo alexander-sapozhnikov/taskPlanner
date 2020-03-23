@@ -384,10 +384,11 @@ public class DBControl implements funDataBase {
         PreparedStatement prepared = null;
 
         try {
-            prepared = conn.prepareStatement("UPDATE tasks SET " +
+            prepared = conn.prepareStatement("UPDATE listsOfUsers SET " +
                     "name = ? " +
                     "where id = ?");
             prepared.setString(1, listsOfUsers.getName());
+            prepared.setInt(2, listsOfUsers.getId());
 
             prepared.execute();
             return true;

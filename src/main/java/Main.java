@@ -1,5 +1,4 @@
 import DataBase.DBControl;
-import DataBase.User;
 import org.apache.log4j.Logger;
 
 
@@ -9,10 +8,21 @@ public class Main {
 
         DBControl dataBase = new DBControl();
 
-
         TaskPlanner taskPlanner = new TaskPlanner(dataBase);
 
-        taskPlanner.hello();
+        //taskPlanner.hello();
+
+        taskPlanner.setUser(dataBase.getUser("alex", "123"));
+        taskPlanner.setStatus(0);
+
+        while(taskPlanner.getStatus() != -1){
+            switch (taskPlanner.getStatus()){
+                case 0: taskPlanner.mainMenu(); break;
+                case 1: taskPlanner.tasks(); break;
+                case 2: taskPlanner.lists(); break;
+                case 3: taskPlanner.searchTask(); break;
+            }
+        }
 
         dataBase.close();
     }

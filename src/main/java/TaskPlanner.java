@@ -12,11 +12,17 @@ public class TaskPlanner implements funTaskPlanner {
     private funDataBase dataBase;
     private PrintStream out;
     private User user = null;
+    private int status;
 
     TaskPlanner(funDataBase dataBase){
         in = new Scanner(System.in);
         this.dataBase = dataBase;
         out = System.out;
+        status = -1;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     @Override
@@ -59,7 +65,7 @@ public class TaskPlanner implements funTaskPlanner {
             }
         } else {
             out.println("Good day, " + user.getFirstname() + "!");
-            mainMenu();
+            status = 0;
         }
     }
 
@@ -112,9 +118,10 @@ public class TaskPlanner implements funTaskPlanner {
 
         if(id > 0){
             user.setId(id);
-            mainMenu();
+            status = 0;
         } else {
             out.println("Oops, something went wrong!");
+            status = -1;
         }
     }
 
@@ -134,11 +141,7 @@ public class TaskPlanner implements funTaskPlanner {
             number = in.nextInt();
         }
 
-        switch (number){
-            case 1: tasks(); break;
-            case 2: lists(); break;
-            case 3: searchTask(); break;
-        }
+        status = number;
 
     }
 
@@ -149,7 +152,7 @@ public class TaskPlanner implements funTaskPlanner {
 
     @Override
     public void lists() {
-        out.println("Menu lists");
+        out.println("Menu lists:");
         out.println("0 - create new list");
         out.println("Your lists:");
         List<ListsOfUsers> lists = dataBase.getListsOfUsers(user.getId());
@@ -171,24 +174,62 @@ public class TaskPlanner implements funTaskPlanner {
         }
 
         switch (number){
-            case 0: mainMenu(); break;
-            case 1: makeList(); break;
+            case -1: status = 0; break;
+            case 0: makeList(); break;
             default: editList(lists.get(number-1)); break;
         }
     }
 
     @Override
     public void makeList() {
+        out.println("Write name for list: ");
+        String name = in.next();
+
+        ListsOfUsers list = new ListsOfUsers();
+        list.setUserId(user.getId());
+        list.setName(name);
+
+        dataBase.setListsOfUsers(list);
+        out.println("Successful! List with name \""+name+"\" created.\n");
 
     }
 
     @Override
     public void editList(ListsOfUsers list) {
+        out.println("List with name \""+list.getName()+"\"");
+        out.println("Menu: " +
+                "\n-1 - back" +
+                "\n0 - delete" +
+                "\n1 - edit ");
+        int number = in.nextInt();
+        if(number == 0){
+            out.println("Do you want to delete this list? (y/n)");
+            String delete = in.next();
+            if(delete.equals("y")){
+                dataBase.deleteListsOfUsers(list.getId());
+            }
+        } else if (number == 1){
+            out.println("Write new name for list: ");
+            String name = in.next();
 
+            list.setUserId(user.getId());
+            list.setName(name);
+
+            dataBase.updateListsOfUsers(list);
+            out.println("Successful! List with name \""+name+"\" changed.\n " + list);
+        }
     }
 
     @Override
     public void searchTask() {
 
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
     }
 }

@@ -1,7 +1,6 @@
 package DataBase;
 
 import com.google.common.hash.Hashing;
-import lombok.Data;
 import lombok.NonNull;
 import org.apache.log4j.Logger;
 
@@ -9,11 +8,10 @@ import java.nio.charset.StandardCharsets;
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 
-public class DBControl implements functionDataBase {
+public class DBControl implements funDataBase {
 
     private Connection conn = null;
     private String userDB = "postgres";
@@ -57,6 +55,12 @@ public class DBControl implements functionDataBase {
 
             ResultSet resultSet = prepared.executeQuery();
             if(resultSet.next()){
+
+                ListsOfUsers listsOfUsers = new ListsOfUsers();
+                listsOfUsers.setUserId(resultSet.getInt("id"));
+                listsOfUsers.setName("None list");
+                setListsOfUsers(listsOfUsers);
+
                 return resultSet.getInt("id");
             }
         } catch (SQLException e) {
@@ -75,7 +79,10 @@ public class DBControl implements functionDataBase {
         try {
             prepared = conn.prepareStatement("SELECT * FROM users WHERE username = ? and password = ?");
             prepared.setString(1, name);
-            prepared.setString(2, password);
+            String hash = Hashing.sha256()
+                    .hashString(password, StandardCharsets.UTF_8)
+                    .toString();
+            prepared.setString(2, hash);
 
             result = prepared.executeQuery();
 
@@ -353,10 +360,11 @@ public class DBControl implements functionDataBase {
         PreparedStatement prepared;
         ArrayList<ListsOfUsers> list = new ArrayList<>();
         try {
-            prepared = conn.prepareStatement("SELECT * FROM listsOfUsers WHERE userId = ?");
+            prepared = conn.prepareStatement("SELECT * FROM listsOfUsers WHERE userId = ? ORDER BY id ASC");
             prepared.setInt(1, userId);
 
             ResultSet result = prepared.executeQuery();
+            result.next();
             while (result.next()){
                 ListsOfUsers listsOfUsers = new ListsOfUsers();
                 listsOfUsers.setId(result.getInt("id"));

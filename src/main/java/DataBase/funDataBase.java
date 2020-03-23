@@ -4,7 +4,7 @@ import lombok.NonNull;
 
 import java.util.List;
 
-public interface functionDataBase {
+public interface funDataBase {
     int setUser(@NonNull User user);
     User getUser(String name, String password);
     User getFromIdUser(int id);

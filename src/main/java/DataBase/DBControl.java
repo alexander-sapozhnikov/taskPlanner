@@ -7,6 +7,7 @@ import org.apache.log4j.Logger;
 import java.nio.charset.StandardCharsets;
 import java.sql.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -234,21 +235,18 @@ public class DBControl implements funDataBase {
     }
 
     @Override
-    public List<Task> getTasks( String name, String description) {
+    public List<Task> getTasks( String name, String description, int userId) {
         PreparedStatement prepared;
         ArrayList<Task> tasks = new ArrayList<>();
         try {
-            if(name.equals("")){
-                prepared = conn.prepareStatement("SELECT * FROM tasks WHERE description Like ?");
-                prepared.setString(1, "%"+description+"%");
-            } else if (description.equals("")){
-                prepared = conn.prepareStatement("SELECT * FROM tasks WHERE name Like ?");
-                prepared.setString(1, "%"+name+"%");
-            } else {
-                prepared = conn.prepareStatement("SELECT * FROM tasks WHERE name Like ? AND  description Like ? ");
-                prepared.setString(1, "%"+name+"%");
-                prepared.setString(2, "%"+description+"%");
-            }
+            StringBuilder stringBuilder = new StringBuilder("SELECT * FROM watcherfortasks as w ")
+                    .append("LEFT JOIN tasks as t on w.contactid = t.id ")
+                    .append("WHERE w.userid = ? AND ");
+
+            prepared = conn.prepareStatement(stringBuilder + "name Like ? AND  description Like ? ");
+            prepared.setInt(1, userId);
+            prepared.setString(2, "%"+name+"%");
+            prepared.setString(3, "%"+description+"%");
 
             ResultSet result = prepared.executeQuery();
             while (result.next()){
@@ -256,7 +254,33 @@ public class DBControl implements funDataBase {
                 task.setId(result.getInt("id"));
                 task.setName(result.getString("name"));
                 task.setDescription(result.getString("description"));
-                task.setAlert_time((LocalDate)result.getObject("alert_time"));
+                task.setAlert_time(((Timestamp)result.getObject("alert_time")).toLocalDateTime());
+                task.setAlert_received(result.getBoolean("alert_received"));
+
+                tasks.add(task);
+            }
+        } catch (SQLException e) {
+            logger.warn(e);
+        }
+        return tasks;
+    }
+
+    @Override
+    public List<Task> getTasks(int userId) {
+        PreparedStatement prepared;
+        ArrayList<Task> tasks = new ArrayList<>();
+        try {
+            prepared = conn.prepareStatement("SELECT * FROM watcherfortasks as w " +
+                    "LEFT JOIN tasks as t on w.contactid = t.id " +
+                    "WHERE w.userid = ?");
+            prepared.setInt(1, userId);
+            ResultSet result = prepared.executeQuery();
+            while (result.next()){
+                Task task = new Task();
+                task.setId(result.getInt("id"));
+                task.setName(result.getString("name"));
+                task.setDescription(result.getString("description"));
+                task.setAlert_time(((Timestamp)result.getObject("alert_time")).toLocalDateTime());
                 task.setAlert_received(result.getBoolean("alert_received"));
 
                 tasks.add(task);
@@ -282,7 +306,7 @@ public class DBControl implements funDataBase {
                 task.setId(result.getInt("id"));
                 task.setName(result.getString("name"));
                 task.setDescription(result.getString("description"));
-                task.setAlert_time((LocalDate)result.getObject("alert_time"));
+                task.setAlert_time((LocalDateTime)result.getObject("alert_time"));
                 task.setAlert_received(result.getBoolean("alert_received"));
             }
         } catch (SQLException e) {

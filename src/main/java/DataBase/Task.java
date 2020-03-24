@@ -5,16 +5,17 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public @Data class Task {
     private int id;
     private String name;
     private String description;
-    private LocalDate alert_time;
+    private LocalDateTime alert_time;
     private boolean alert_received;
 
     @Override
-    public String       toString() {
+    public String toString() {
         return "Task{" +
                 "id=" + id +
                 ", name='" + name + '\'' +

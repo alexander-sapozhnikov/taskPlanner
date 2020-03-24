@@ -12,7 +12,8 @@ public interface funDataBase {
     boolean deleteUser(int id);
 
     int setTask(@NonNull Task task, int userId, int listId);
-    List<Task> getTasks( String name, String description);
+    List<Task> getTasks( String name, String description, int userId);
+    List<Task> getTasks( int userId);
     Task getFromIdTask(int id);
     boolean updateTask(@NonNull Task task);
     boolean deleteTask(int id);

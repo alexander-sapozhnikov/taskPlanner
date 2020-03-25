@@ -1,37 +1,32 @@
-import DataBase.DBControl;
+import DataBase.*;
 import org.apache.log4j.Logger;
-
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.ZoneOffset;
-import java.util.Date;
-import java.util.concurrent.*;
-import static java.util.concurrent.TimeUnit.*;
-
+import TaskPlanner.*;
 
 public class Main {
     static Logger logger = Logger.getLogger(Main.class);
     public static void main(String[] args) {
 
+        int status = 0;
 
-        DBControl dataBase = new DBControl();
+        HelloTP helloTP = new HelloTP(new UserDB());
 
-        TaskPlanner taskPlanner = new TaskPlanner(dataBase);
+        status = helloTP.start();
 
-        //taskPlanner.hello();
+        int userId = helloTP.getUser().getId();
 
-        taskPlanner.setUser(dataBase.getUser("alex", "123"));
-        taskPlanner.setStatus(0);
+        TaskPlannerAble taskTP = new TaskTP(new TaskDB(userId), new ListsOfUsersDB(userId), 1);
+        TaskPlannerAble listTP = new ListTP(new ListsOfUsersDB(userId), 2);
+        TaskPlannerAble searchTP = new SearchTP(new TaskDB(userId), 3);
 
-        while(taskPlanner.getStatus() != -1){
-            switch (taskPlanner.getStatus()){
-                case 0: taskPlanner.mainMenu(); break;
-                case 1: taskPlanner.tasks(); break;
-                case 2: taskPlanner.lists(); break;
-                case 3: taskPlanner.searchTask(); break;
+
+        while(true){
+            switch (status){
+                case 0: status = helloTP.mainMenu(); break;
+                case 1: status = taskTP.start(); break;
+                case 2: status = listTP.start(); break;
+                case 3: status = searchTP.start(); break;
             }
         }
 
-        dataBase.close();
     }
 }

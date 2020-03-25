@@ -1,4 +1,4 @@
-package DataBase;
+package Enity;
 
 import lombok.Data;
 

@@ -1,18 +1,16 @@
-package DataBase;
+package Enity;
 
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public @Data class Task {
-    private int id;
-    private String name;
-    private String description;
+    private int id = -1;
+    private int listId = -1;
+    private String name = "";
+    private String description = "";
     private LocalDateTime alert_time;
-    private boolean alert_received;
+    private boolean alert_received = false;
 
     @Override
     public String toString() {

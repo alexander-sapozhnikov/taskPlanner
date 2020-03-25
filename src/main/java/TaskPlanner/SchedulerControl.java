@@ -1,12 +1,13 @@
-import DataBase.DBControl;
-import DataBase.Task;
+package TaskPlanner;
+
+import DataBase.DataBaseAble;
+import DataBase.TaskDB;
+import DataBase.UserDB;
+import Enity.Task;
 
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
-import java.time.ZoneId;
 import java.time.ZoneOffset;
-import java.util.GregorianCalendar;
-import java.util.TimeZone;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
@@ -16,13 +17,16 @@ public class SchedulerControl {
     private final static ScheduledExecutorService scheduler =
             Executors.newSingleThreadScheduledExecutor();
 
-    public static void  setScheduler(Task oldTask) {
+    public static void  setScheduler(Task oldTask, DataBaseAble<Task> taskDB) {
         ZoneOffset offset = OffsetDateTime.now().getOffset();
 
         Runnable runnable =  ()->{
+            oldTask.setName("");
+            oldTask.setDescription("");
+
+            Task task = taskDB.get(oldTask).get(0);
+
             long timeNow = LocalDateTime.now().toEpochSecond(offset);
-            DBControl dbControl = new DBControl();
-            Task task = dbControl.getFromIdTask(oldTask.getId());
 
             if(task.getAlert_time().toEpochSecond(offset) - timeNow == 0){
                 StringBuilder stringBuilder = new StringBuilder()
@@ -33,9 +37,8 @@ public class SchedulerControl {
                 System.out.println(stringBuilder);
 
                 task.setAlert_received(true);
-                dbControl.updateTask(task);
+                taskDB.update(task);
             }
-            dbControl.close();
         };
 
         long time = oldTask.getAlert_time().toEpochSecond(offset) -

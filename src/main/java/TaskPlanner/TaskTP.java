@@ -54,7 +54,7 @@ public class TaskTP implements TaskPlannerAble {
         switch (number){
             case -1: return 0;
             case 0: makeTask(); break;
-            default: menuEditTask(tasks.get(number-1)); break;
+            default: menuTask(tasks.get(number-1)); break;
         }
         return status;
     }
@@ -104,7 +104,7 @@ public class TaskTP implements TaskPlannerAble {
         out.println("Successful!");
     }
 
-    public void menuEditTask(Task task) {
+    public void menuTask(Task task) {
         out.println("Task with name \""+task.getName()+"\"");
         out.println("Menu: " +
                 "\n-1 - back" +

@@ -52,7 +52,7 @@ public class ListTP implements TaskPlannerAble {
         switch (number){
             case -1: return  0;
             case 0: makeList(); break;
-            default: editList(lists.get(number-1)); break;
+            default: menuList(lists.get(number-1)); break;
         }
 
         return status;
@@ -71,13 +71,15 @@ public class ListTP implements TaskPlannerAble {
 
     }
 
-    public void editList(ListsOfUsers list) {
+    public void menuList(ListsOfUsers list) {
         out.println("List with name \""+list.getName()+"\"");
         out.println("Menu: " +
                 "\n-1 - back" +
                 "\n0 - delete" +
                 "\n1 - edit ");
+
         int number = in.nextInt();
+
         if(number == 0){
             out.println("Do you want to delete this list? (y/n)");
             String delete = in.next();

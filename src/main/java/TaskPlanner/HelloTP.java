@@ -6,7 +6,7 @@ import Enity.User;
 import java.io.PrintStream;
 import java.util.Scanner;
 
-public class HelloTP implements TaskPlannerAble {
+public class HelloTP {
 
     private Scanner in;
     private DataBaseAble<User>  dataBase;
@@ -19,7 +19,6 @@ public class HelloTP implements TaskPlannerAble {
         out = System.out;
     }
 
-    @Override
     public int start() {
         out.println("1 - Log In");
         out.println("2 - Sign Out");

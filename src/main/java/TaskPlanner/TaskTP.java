@@ -19,11 +19,10 @@ public class TaskTP implements TaskPlannerAble {
     private PrintStream out;
     private int status;
 
-    public TaskTP (DataBaseAble<Task> dataBase, DataBaseAble<ListsOfUsers> listDB, int status){
+    public TaskTP (DataBaseAble<Task> dataBase, DataBaseAble<ListsOfUsers> listDB){
         in = new Scanner(System.in);
         out = System.out;
         this.dataBase = dataBase;
-        this.status = status;
         this.listDB = listDB;
     }
 
@@ -57,6 +56,11 @@ public class TaskTP implements TaskPlannerAble {
             default: menuTask(tasks.get(number-1)); break;
         }
         return status;
+    }
+
+    @Override
+    public void setStatus(int status) {
+        this.status = status;
     }
 
     public void makeTask() {

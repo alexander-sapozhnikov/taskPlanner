@@ -12,9 +12,9 @@ public class Main {
 
         Facade facade = new Facade();
         facade.add(new MenuTP());
-        facade.add(new TaskTP(new TaskDB(userId), new ListsOfUsersDB(userId), 1));
-        facade.add(new ListTP(new ListsOfUsersDB(userId), 2));
-        facade.add(new SearchTP(new TaskDB(userId), 3));
+        facade.add(new TaskTP(new TaskDB(userId), new ListsOfUsersDB(userId)));
+        facade.add(new ListTP(new ListsOfUsersDB(userId)));
+        facade.add(new SearchTP(new TaskDB(userId)));
 
         while(true){
             status = facade.get(status);

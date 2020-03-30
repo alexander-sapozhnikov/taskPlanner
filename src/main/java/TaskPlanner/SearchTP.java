@@ -14,11 +14,10 @@ public class SearchTP implements TaskPlannerAble {
     private PrintStream out;
     private int status;
 
-    public SearchTP (DataBaseAble<Task> dataBase, int status){
+    public SearchTP (DataBaseAble<Task> dataBase){
         in = new Scanner(System.in);
         out = System.out;
         this.dataBase = dataBase;
-        this.status = status;
     }
 
     @Override
@@ -60,5 +59,14 @@ public class SearchTP implements TaskPlannerAble {
         }
 
         return status;
+    }
+
+    @Override
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
+    public void setIn(Scanner in) {
+        this.in = in;
     }
 }

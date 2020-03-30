@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Facade {
+
     private List<TaskPlannerAble> list;
 
     public Facade(){
@@ -11,6 +12,7 @@ public class Facade {
     }
 
     public void add (TaskPlannerAble taskPlanner){
+        taskPlanner.setStatus(list.size());
         list.add(taskPlanner);
     }
 

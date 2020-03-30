@@ -33,4 +33,7 @@ public class MenuTP implements TaskPlannerAble {
 
         return number;
     }
+    @Override
+    public void setStatus(int status) {
+    }
 }

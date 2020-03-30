@@ -17,11 +17,10 @@ public class ListTP implements TaskPlannerAble {
     private PrintStream out;
     private int status;
 
-    public ListTP (DataBaseAble<ListsOfUsers> dataBase, int status){
+    public ListTP (DataBaseAble<ListsOfUsers> dataBase){
         in = new Scanner(System.in);
         out = System.out;
         this.dataBase = dataBase;
-        this.status = status;
     }
 
     @Override
@@ -58,6 +57,10 @@ public class ListTP implements TaskPlannerAble {
         return status;
     }
 
+    @Override
+    public void setStatus(int status) {
+        this.status = status;
+    }
 
     public void makeList() {
         out.println("Write name for list: ");

@@ -34,8 +34,8 @@ public class ListTP implements TaskPlannerAble {
         if(lists.isEmpty()){
             out.println("You don't have any lists.");
         } else{
-            for (int i = 0; i < lists.size(); i++) {
-                out.println((i+1) +" - " + lists.get(i).getName());
+            for (int i = 1; i < lists.size(); i++) {
+                out.println(i +" - " + lists.get(i).getName());
             }
         }
         out.println("-1 - back to main menu");

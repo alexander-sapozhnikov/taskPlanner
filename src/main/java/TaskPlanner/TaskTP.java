@@ -1,9 +1,11 @@
 package TaskPlanner;
 
 import DataBase.DataBaseAble;
+import DataBase.UserDB;
 import Enity.ListsOfUsers;
 import Enity.Task;
 import Enity.User;
+import org.apache.log4j.Logger;
 
 import java.io.PrintStream;
 import java.time.LocalDateTime;
@@ -18,6 +20,7 @@ public class TaskTP implements TaskPlannerAble {
     private DataBaseAble<ListsOfUsers> listDB;
     private PrintStream out;
     private int status;
+    static Logger logger = Logger.getLogger(TaskTP.class);
 
     public TaskTP (DataBaseAble<Task> dataBase, DataBaseAble<ListsOfUsers> listDB){
         in = new Scanner(System.in);
@@ -90,17 +93,23 @@ public class TaskTP implements TaskPlannerAble {
         out.println("Write number list for task: ");
         List<ListsOfUsers> lists = listDB.get(new ListsOfUsers());
         for (int i = 0; i < lists.size(); i++) {
-            out.println((i) +" - " + lists.get(i).getName());
+            out.println((i) + " - " + lists.get(i).getName());
         }
-        int listId = in.nextInt();
 
+        int listId = in.nextInt();
         Task task = new Task();
-        task.setName(name);
-        task.setDescription(description);
-        LocalDateTime alert_time = LocalDateTime.of(year, Month.of(month), day, hour, min, 0);
-        task.setAlert_time(alert_time);
-        task.setAlert_received(false);
-        task.setListId(lists.get(listId).getId());
+        try {
+            task.setName(name);
+            task.setDescription(description);
+            LocalDateTime alert_time = LocalDateTime.of(year, Month.of(month), day, hour, min, 0);
+            task.setAlert_time(alert_time);
+            task.setAlert_received(false);
+            task.setListId(lists.get(listId).getId());
+        } catch (Exception e){
+            logger.error(e);
+            out.println("Error! Please, try another time.");
+            return;
+        }
 
         SchedulerControl.setScheduler(task, dataBase);
 
@@ -168,19 +177,24 @@ public class TaskTP implements TaskPlannerAble {
         }
 
         Task newTask = new Task();
-        newTask.setId(task.getId());
-        newTask.setName(name);
-        newTask.setDescription(description);
+        try {
+            newTask.setId(task.getId());
+            newTask.setName(name);
+            newTask.setDescription(description);
 
-        if(alert_time == null){
-            newTask.setAlert_time(task.getAlert_time());
-            newTask.setAlert_received(false);
-        } else {
-            newTask.setAlert_time(alert_time);
-            newTask.setAlert_received(true);
-            SchedulerControl.setScheduler(task, dataBase);
+            if (alert_time == null) {
+                newTask.setAlert_time(task.getAlert_time());
+                newTask.setAlert_received(false);
+            } else {
+                newTask.setAlert_time(alert_time);
+                newTask.setAlert_received(true);
+                SchedulerControl.setScheduler(task, dataBase);
+            }
+        } catch (Exception e){
+            logger.error(e);
+            out.println("Error! Please, try another time.");
+            return;
         }
-
         dataBase.update(newTask);
         out.println("Successful!");
     }

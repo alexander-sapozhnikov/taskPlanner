@@ -6,10 +6,11 @@ public class Main {
 
         int status = 0;
 
-        HelloTP helloTP = new HelloTP(new UserDB());
-        status = helloTP.start();
-        int userId = helloTP.getUser().getId();
+//        HelloTP helloTP = new HelloTP(new UserDB());
+//        status = helloTP.start();
+//        int userId = helloTP.getUser().getId();
 
+        int userId = 19;
         Facade facade = new Facade();
         facade.add(new MenuTP());
         facade.add(new TaskTP(new TaskDB(userId), new ListsOfUsersDB(userId)));

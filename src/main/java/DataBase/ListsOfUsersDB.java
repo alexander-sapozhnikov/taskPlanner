@@ -51,9 +51,7 @@ public class ListsOfUsersDB implements DataBaseAble<ListsOfUsers>{
         try {
             prepared = conn.prepareStatement("SELECT * FROM listsOfUsers WHERE userId = ? ORDER BY id ASC");
             prepared.setInt(1, userId);
-
             ResultSet result = prepared.executeQuery();
-            result.next();
             while (result.next()){
                 ListsOfUsers listsOfUsers = new ListsOfUsers();
                 listsOfUsers.setId(result.getInt("id"));

@@ -55,7 +55,7 @@ public class HelloTP {
             out.println("Incorrect username or password." +
                     "\nWould you like to make new account? (y/n) ");
 
-            if(in.next().equals("y")){
+            if("y".equals(in.next())){
                 signOut();
             } else {
                 logIn();
@@ -77,7 +77,7 @@ public class HelloTP {
 
         out.println("Write password: ");
         String password = in.next();
-        while(password.equals("")){
+        while(" ".equals(password)){
             out.println("Write not empty password: ");
             password = in.next();
         }
